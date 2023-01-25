@@ -89,10 +89,8 @@ def environ_test_setup():
     os.environ.setdefault("RAMSIN_ISAN_ISENTROPIC_SCALE_FACTOR", "1.0,2.0,4.2, 2e-10")
 
 
-
-
 def main():
-    #environ_test_setup()
+    # environ_test_setup()
 
     args = get_args()
 
