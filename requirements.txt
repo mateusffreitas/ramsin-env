@@ -1,3 +1,4 @@
 f90nml
 argparse
 pydantic
+datamodel-code-generator
