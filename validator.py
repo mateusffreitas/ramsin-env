@@ -4,13 +4,25 @@ from pydantic import BaseModel, validator, BaseSettings, Field, create_model
 from pydantic.env_settings import SettingsSourceCallable
 
 from typing import List, Optional
+import f90nml
+
+
+class MyConfig:
+    @classmethod
+    def customise_sources(
+            cls,
+            init_settings: SettingsSourceCallable,
+            env_settings: SettingsSourceCallable,
+            file_secret_settings: SettingsSourceCallable,
+    ) -> tuple[SettingsSourceCallable, ...]:
+        return env_settings, init_settings, file_secret_settings
 
 
 class ModelAdvRamsin(BaseModel):
     advanced_ramsin: str
 
 
-class ModelGrids(BaseModel):
+class ModelGrids(BaseSettings):
     expnme: str
     runtype: str
     timeunit: str
@@ -31,11 +43,14 @@ class ModelGrids(BaseModel):
     dzmax: float
     fixlevels: int
     zz: List[float]
-    dtlong: float
+    dtlong: float = Field(30., ge=1.0, env=["RAMSIN_MODEL_GRIDS_DTLONG", "DTLONG"])
     polelat: float
     polelon: float
     centlat: float
     centlon: float
+
+    class Config(MyConfig):
+        pass
 
 
 class CcattInfo(BaseModel):
@@ -49,7 +64,7 @@ class CcattInfo(BaseModel):
     aer_timestep: float
 
 
-class ModelFileInfo(BaseModel):
+class ModelFileInfo(BaseSettings):
     initial: int
     varfpfx: str
     tnudcent: float
@@ -62,7 +77,7 @@ class ModelFileInfo(BaseModel):
     hfilout: str
     afilout: str
     frqhis: float
-    frqanl: float
+    frqanl: float = Field(60., ge=1.0, env="FRQANL")
     topfiles: str
     sfcfiles: str
     sstfpfx: str
@@ -72,6 +87,9 @@ class ModelFileInfo(BaseModel):
     ivegtfn: str
     isoilfn: str
     ndvifn: str
+
+    class Config(MyConfig):
+        pass
 
 
 class ModelOptions(BaseModel):
@@ -135,8 +153,7 @@ class Post(BaseModel):
     site_lon: float
 
 
-
-class Model(BaseModel):
+class Model(BaseSettings):
     model_adv_ramsin: Optional[ModelAdvRamsin] = None
     model_grids: Optional[ModelGrids] = None
     ccatt_info: Optional[CcattInfo] = None
@@ -145,6 +162,9 @@ class Model(BaseModel):
     isan_control: Optional[IsanControl] = None
     isan_isentropic: Optional[IsanIsentropic] = None
     post: Optional[Post] = None
+
+    class Config(MyConfig):
+        pass
 
 # def is_multiple_of_dtlong(values, v)
 
@@ -175,28 +195,18 @@ class Settings(BaseSettings):
     dtlong: float = Field(30., env="DTLONG")
     frqanl: float = Field(60., env="FRQANL")
 
-class MyConfig:
-    @classmethod
-    def customise_sources(
-            cls,
-            init_settings: SettingsSourceCallable,
-            env_settings: SettingsSourceCallable,
-            file_secret_settings: SettingsSourceCallable,
-    ) -> tuple[SettingsSourceCallable, ...]:
-        return env_settings, init_settings, file_secret_settings
-
 
 class EnvPrioritySettings(BaseSettings):
-    dtlong: float = Field(30., ge=1.0, env=["RAMSIN_MODEL_GRIDS_DTLONG","DTLONG"])
+    dtlong: float = Field(30., ge=1.0, env=["RAMSIN_MODEL_GRIDS_DTLONG", "DTLONG"])
     frqanl: float = Field(60., env="FRQANL")
 
-    @validator('dtlong' )
+    @validator('dtlong')
     def dtlong_greater_or_equal_to_1(cls, v):
         if v < 1.:
             raise ValueError('dtlong must be greater or equal to 1')
         return v
 
-    @validator('dtlong' )
+    @validator('dtlong')
     def dtlong_is_float(cls, v):
 
         if not isinstance(v, float):
@@ -220,7 +230,7 @@ def test_pydantic_validation():
     )
     print(ramsin)
 
-    keydict= {'dtlong':6., 'frqanl':12}
+    keydict = {'dtlong': 6., 'frqanl': 12}
     ramsin = RamsinModel(**keydict)
     print(ramsin)
 
@@ -240,13 +250,26 @@ def test_pydantic_validation():
     print(m)
 
 
+def test_pydantic_model_fill_with_f90nml_object():
+    with open("RAMSIN_BASIC") as f:
+        ramsin_basic = f90nml.read(f)
+    values = ramsin_basic.values().mapping
+    print(values)
+    model = Model(**values)
+    print(model)
+    print(f"dtlong = {model.model_grids.dtlong}")
+    print(f"frqanl = {model.model_file_info.frqanl}")
+    print({k for k in values})
+
+
 def environ_test_setup():
     os.environ.setdefault("RAMSIN_MODEL_GRIDS_DELTAX", "1000.555")
     os.environ.setdefault("RAMSIN_MODEL_GRIDS_DELTAXF", "1000.555")
     os.environ.setdefault("DTLONG", "15.")
-    #os.environ.setdefault("RAMSIN_MODEL_GRIDS_DTLONG", "3.")
-    os.environ.setdefault("frqanl", "15.")
+    # os.environ.setdefault("RAMSIN_MODEL_GRIDS_DTLONG", "3.")
+    os.environ.setdefault("frqanl", "28.")
 
 
 environ_test_setup()
-test_pydantic_validation()
+# test_pydantic_validation()
+test_pydantic_model_fill_with_f90nml_object()
