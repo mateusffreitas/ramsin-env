@@ -1,6 +1,7 @@
 from __future__ import annotations
 import os
-from pydantic import BaseModel, validator, BaseSettings, Field, create_model
+from pydantic import BaseModel, validator, BaseSettings, Field, create_model, \
+    root_validator
 from pydantic.env_settings import SettingsSourceCallable
 
 from typing import List, Optional
@@ -48,6 +49,18 @@ class ModelGrids(BaseSettings):
     polelon: float
     centlat: float
     centlon: float
+
+    @validator('dtlong')
+    def dtlong_greater_or_equal_to_1(cls, v):
+        if v < 1.:
+            raise ValueError('dtlong must be greater or equal to 1')
+        return v
+
+    @validator('dtlong')
+    def dtlong_is_float(cls, v):
+        if not isinstance(v, float):
+            raise ValueError('dtlong must be float')
+        return v
 
     class Config(MyConfig):
         pass
@@ -163,6 +176,14 @@ class Model(BaseSettings):
     isan_isentropic: Optional[IsanIsentropic] = None
     post: Optional[Post] = None
 
+    @validator("model_file_info")
+    def multiple_of_dtlong(cls, v, values):
+        print(v)
+        if values['model_grids'].dtlong is not None and (v.frqanl % values['model_grids'].dtlong) != 0.:
+            raise ValueError('frqanl is not a multiple of dtlong')
+        return values
+
+
     class Config(MyConfig):
         pass
 
@@ -208,7 +229,6 @@ class EnvPrioritySettings(BaseSettings):
 
     @validator('dtlong')
     def dtlong_is_float(cls, v):
-
         if not isinstance(v, float):
             raise ValueError('dtlong must be float')
         return v
@@ -254,20 +274,17 @@ def test_pydantic_model_fill_with_f90nml_object():
     with open("RAMSIN_BASIC") as f:
         ramsin_basic = f90nml.read(f)
     values = ramsin_basic.values().mapping
-    print(values)
+    #print(values)
     model = Model(**values)
-    print(model)
+    #print(model)
     print(f"dtlong = {model.model_grids.dtlong}")
     print(f"frqanl = {model.model_file_info.frqanl}")
-    print({k for k in values})
 
 
 def environ_test_setup():
-    os.environ.setdefault("RAMSIN_MODEL_GRIDS_DELTAX", "1000.555")
-    os.environ.setdefault("RAMSIN_MODEL_GRIDS_DELTAXF", "1000.555")
-    os.environ.setdefault("DTLONG", "15.")
+    os.environ.setdefault("DTLONG", "15a.")
     # os.environ.setdefault("RAMSIN_MODEL_GRIDS_DTLONG", "3.")
-    os.environ.setdefault("frqanl", "28.")
+    os.environ.setdefault("frqanl", "30.")
 
 
 environ_test_setup()
