@@ -4,11 +4,11 @@ from pydantic import BaseModel, validator, BaseSettings, Field, create_model, \
     root_validator
 from pydantic.env_settings import SettingsSourceCallable
 
-from typing import List, Optional
+from typing import List, Optional, Any, Union
 import f90nml
 
 
-class MyConfig:
+class RamsinConfig:
     @classmethod
     def customise_sources(
             cls,
@@ -17,6 +17,12 @@ class MyConfig:
             file_secret_settings: SettingsSourceCallable,
     ) -> tuple[SettingsSourceCallable, ...]:
         return env_settings, init_settings, file_secret_settings
+
+    @classmethod
+    def parse_env_var(cls, field_name: str, raw_val: str) -> Any:
+        if field_name == 'numbers':
+            return [int(x) for x in raw_val.split(',')]
+        return cls.json_loads(raw_val)
 
 
 class ModelAdvRamsin(BaseModel):
@@ -62,11 +68,10 @@ class ModelGrids(BaseSettings):
             raise ValueError('dtlong must be float')
         return v
 
-    class Config(MyConfig):
-        pass
 
 
-class CcattInfo(BaseModel):
+
+class CcattInfo(BaseSettings):
     ccatt: int
     chemistry: int
     chem_timestep: float
@@ -101,11 +106,11 @@ class ModelFileInfo(BaseSettings):
     isoilfn: str
     ndvifn: str
 
-    class Config(MyConfig):
+    class Config(RamsinConfig):
         pass
 
 
-class ModelOptions(BaseModel):
+class ModelOptions(BaseSettings):
     iswrtyp: int
     ilwrtyp: int
     radfrq: float
@@ -123,13 +128,13 @@ class ModelOptions(BaseModel):
     level: int
 
 
-class IsanControl(BaseModel):
+class IsanControl(BaseSettings):
     isan_inc: int
     iapr: str
     varpfx: str
 
 
-class IsanIsentropic(BaseModel):
+class IsanIsentropic(BaseSettings):
     icfiletype: int
     icprefix: str
     wind_u_varname: str
@@ -145,7 +150,7 @@ class IsanIsentropic(BaseModel):
     scale_factor: List[float]
 
 
-class Post(BaseModel):
+class Post(BaseSettings):
     nvp: int
     vp: List[str]
     gprefix: str
@@ -160,10 +165,25 @@ class Post(BaseModel):
     zlevmax: List[int]
     ipresslev: int
     inplevs: int
-    iplevs: List[int]
+    iplevs: Union[List[int], str]
     ascii_data: str
     site_lat: float
     site_lon: float
+
+    @validator("iplevs", pre=True)
+    def parse_iplevs(cls, v):
+        if isinstance(v, str):
+            return [int(x) for x in v.split(',')]
+        return v
+
+    @validator("iplevs")
+    def check_iplevs_sum(cls, v):
+        if sum(v) != 6:
+            raise ValueError("iplevs sum is not 6")
+        return v
+
+    class Config(RamsinConfig):
+        pass
 
 
 class Model(BaseSettings):
@@ -178,16 +198,14 @@ class Model(BaseSettings):
 
     @validator("model_file_info")
     def multiple_of_dtlong(cls, v, values):
-        print(v)
+        #print(v)
         if values['model_grids'].dtlong is not None and (v.frqanl % values['model_grids'].dtlong) != 0.:
-            raise ValueError('frqanl is not a multiple of dtlong')
-        return values
+            raise ValueError(f'frqanl ({v.frqanl}) is not a multiple of dtlong ({values["model_grids"].dtlong})')
+        return v
 
 
-    class Config(MyConfig):
+    class Config(RamsinConfig):
         pass
-
-# def is_multiple_of_dtlong(values, v)
 
 class RamsinModel(BaseModel):
     dtlong: float = 30.
@@ -239,8 +257,7 @@ class EnvPrioritySettings(BaseSettings):
             raise ValueError('frqanl is not a multiple of dtlong')
         return v
 
-    class Config(MyConfig):
-        pass
+    class Config(RamsinConfig): pass
 
 
 def test_pydantic_validation():
@@ -271,22 +288,35 @@ def test_pydantic_validation():
 
 
 def test_pydantic_model_fill_with_f90nml_object():
+
+    from ramsin_model import RamsinBasic
+
     with open("RAMSIN_BASIC") as f:
         ramsin_basic = f90nml.read(f)
     values = ramsin_basic.values().mapping
     #print(values)
-    model = Model(**values)
+    model = RamsinBasic(**values)
     #print(model)
     print(f"dtlong = {model.model_grids.dtlong}")
     print(f"frqanl = {model.model_file_info.frqanl}")
+    print(model.model_grids)
+    print(model.post.iplevs)
 
 
 def environ_test_setup():
-    os.environ.setdefault("DTLONG", "15a.")
+    os.environ.setdefault("RAMSIN_DTLONG", "15.")
+    os.environ.setdefault("RAMSIN_NNXP", "560")
+    os.environ.setdefault("RAMSIN_TIMMAX", "999")
+    os.environ.setdefault("RAMSIN_EXPNME", "Test")
+    os.environ.setdefault("RAMSIN_ZZ", "1,2,3")
+    os.environ.setdefault("RAMSIN_IPLEVS", "1,2,3")
+
     # os.environ.setdefault("RAMSIN_MODEL_GRIDS_DTLONG", "3.")
-    os.environ.setdefault("frqanl", "30.")
+    os.environ.setdefault("ramsin_frqanl", "30.")
 
 
 environ_test_setup()
+
 # test_pydantic_validation()
 test_pydantic_model_fill_with_f90nml_object()
+
