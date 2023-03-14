@@ -300,7 +300,12 @@ def test_pydantic_model_fill_with_f90nml_object():
     print(f"dtlong = {model.model_grids.dtlong}")
     print(f"frqanl = {model.model_file_info.frqanl}")
     print(model.model_grids)
-    print(model.post.iplevs)
+    print(model.post.iplevs, model.post.vp)
+    print(ramsin_basic["post"])
+    ramsin_basic.patch(model.dict())
+    print(ramsin_basic["post"])
+    ramsin_basic.write(nml_path="RAMSIN_BASIC_modified",force=True,sort=False)
+    f90nml.patch(nml_path="RAMSIN_BASIC",nml_patch=model.dict(),out_path="RAMSIN_BASIC_patched")
 
 
 def environ_test_setup():
@@ -310,6 +315,7 @@ def environ_test_setup():
     os.environ.setdefault("RAMSIN_EXPNME", "Test")
     os.environ.setdefault("RAMSIN_ZZ", "1,2,3")
     os.environ.setdefault("RAMSIN_IPLEVS", "1,2,3")
+    os.environ.setdefault("RAMSIN_VP", "precip,topo,tempc")
 
     # os.environ.setdefault("RAMSIN_MODEL_GRIDS_DTLONG", "3.")
     os.environ.setdefault("ramsin_frqanl", "30.")
@@ -319,4 +325,3 @@ environ_test_setup()
 
 # test_pydantic_validation()
 test_pydantic_model_fill_with_f90nml_object()
-
