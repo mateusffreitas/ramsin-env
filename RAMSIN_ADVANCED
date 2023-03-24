@@ -335,13 +335,13 @@ $MODEL_OPTIONS2
    IHAIL   = 2,              !  5 - prognostic concentration
                              
    CPARM   = .3e9,           !  Microphysics parameters
-   RPARM   = 1.e-3,          !-------------------------
-   PPARM   = 1.e-6,             !  Characteristic diameter, # concentration
-   SPARM   = 1.e-3,          !    or y-intercept
-   APARM   = 1.e-3,
-   GPARM   = 1.e-3,
-   HPARM   = 3.e-3,
-   DPARM   = 1.e-5,          ! (5 = 3D homogeneous 6 = vertical profile)
+   RPARM   = 1.0e-3,          !-------------------------
+   PPARM   = 1.01e-6,             !  Characteristic diameter, # concentration
+   SPARM   = 1.0e-3,          !    or y-intercept
+   APARM   = 1.0e-3,
+   GPARM   = 1.0e-3,
+   HPARM   = 3.0e-3,
+   DPARM   = 1.01e-5,          ! (5 = 3D homogeneous 6 = vertical profile)
 
    GNU     = 2.,2.,2.,2.,2.,2.,2.,2., ! Gamma shape parms for
 
