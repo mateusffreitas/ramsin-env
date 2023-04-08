@@ -1,9 +1,9 @@
+from __future__ import annotations
 import argparse
 import os
-from ramsin_model import RamsinBasic
-from ramsin_adv_model import RamsinAdvanced
 import f90nml
-
+from ramsin_model_validator import RamsinBasic
+from ramsin_adv_model_validator import RamsinAdvanced
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -16,25 +16,42 @@ Examples of supported environment variable naming scheme and values: \n
     RAMSIN_IPLEVS="500,400,300,200"        ( Integer array ) 
     RAMSIN_DELTAX="1000."                  ( Real )
     RAMSIN_SCALE_FACTOR="1.0e10,4.2"       ( Real Array )
-    RAMSIN_VP="topo"                     ( Character )
-    RAMSIN_VP="topo,precip"            ( Character array )
+    RAMSIN_VP="topo"                       ( Character )
+    RAMSIN_VP="topo,precip"                ( Character array )
     RAMSIN_APPLYMETEOGRAM=".false."        ( Logical )
-    RAMSIN_APPLYMETEOGRAM=".false.,.true." ( Logical array )""")
+    RAMSIN_APPLYMETEOGRAM=".false.,.true." ( Logical array )""",
+    )
 
-    parser.add_argument("--ramsin_basic", "-f", action="store", type=str,
-                        default="RAMSIN_BASIC",
-                        help="the RAMSIN_BASIC file")
-    parser.add_argument("--output_basic", "-o", action="store", type=str,
-                        default="RAMSIN_BASIC_MODIFIED",
-                        help="the filename to write the RAMSIN_BASIC")
-    parser.add_argument("--output_advanced", "-a", action="store", type=str,
-                        default="RAMSIN_ADVANCED_MODIFIED",
-                        help="the filename to write the RAMSIN_ADVANCED")
+    parser.add_argument(
+        "--ramsin_basic",
+        "-f",
+        action="store",
+        type=str,
+        default="RAMSIN_BASIC",
+        help="the RAMSIN_BASIC file",
+    )
+    parser.add_argument(
+        "--output_basic",
+        "-o",
+        action="store",
+        type=str,
+        default="RAMSIN_BASIC_MODIFIED",
+        help="the filename to write the RAMSIN_BASIC",
+    )
+    parser.add_argument(
+        "--output_advanced",
+        "-a",
+        action="store",
+        type=str,
+        default="RAMSIN_ADVANCED_MODIFIED",
+        help="the filename to write the RAMSIN_ADVANCED",
+    )
 
     return parser.parse_args()
 
+
 def environ_test_setup():
-    os.environ.setdefault("RAMSIN_DTLONG", "15.")
+    os.environ.setdefault("RAMSIN_DTLONG", "15")
     os.environ.setdefault("RAMSIN_NNXP", "560")
     os.environ.setdefault("RAMSIN_TIMMAX", "999")
     os.environ.setdefault("RAMSIN_EXPNME", "Test")
@@ -72,5 +89,6 @@ def main():
     ramsin_advanced.patch(adv_model.dict())
     ramsin_advanced.write(nml_path=args.output_advanced, force=True, sort=False)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
