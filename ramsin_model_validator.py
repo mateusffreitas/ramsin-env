@@ -9,16 +9,44 @@ class ModelAdvRamsin(ramsin_model.ModelAdvRamsin):
 
 
 class ModelGrids(ramsin_model.ModelGrids):
-    @validator("timmax")
-    def timmax_gt_0(cls, v):
+
+    @validator("expnme")
+    def expnme_length_gte_1(cls, v):
+        if len(v) == 0:
+            raise ValueError("Length must be greater or equal to 1")
+        return v
+
+    @validator('runtype')
+    def runtype_valid_values(cls, v):
+        choices = ['MAKESFC', 'MAKEVFILE', 'INITIAL', 'HISTORY', 'MEMORY']
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("timeunit")
+    def timeunit_valid_values(cls, v):
+        choices = ['h', 'm', 's']
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator('timmax', 'imonth1', 'idate1', 'iyear1', 'nnxp', 'nnyp', 'nnzp', 'nzg',
+               'nzs', 'deltax', 'deltay')
+    def positive_value(cls, v):
         if v <= 0:
-            raise ValueError("Must be greater than 0")
+            raise ValueError('Value must be positive')
         return v
 
     @validator("dtlong")
     def dtlong_gte_1(cls, v):
         if v < 1.0:
-            raise ValueError("Must be greater or equal to 1")
+            raise ValueError("Value must be greater or equal to 1")
+        return v
+
+    @validator("zz")
+    def zz_length_eq_nnzp(cls, v, values):
+        if values["deltaz"] == 0. and len(v) != values["nnzp"]:
+            raise ValueError("Length must be equal to nnzp")
         return v
 
 
