@@ -67,12 +67,70 @@ class CcattInfo(ramsin_model.CcattInfo):
 
 
 class ModelFileInfo(ramsin_model.ModelFileInfo):
-    pass
+    @validator("ioutput")
+    def ioutput_valid_values(cls, v):
+        choices = [0, 1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class ModelOptions(ramsin_model.ModelOptions):
-    pass
+    @validator("ilwrtyp")
+    def ilwrtyp_valid_values(cls, v):
+        choices = [0, 1, 2, 3, 4, 5, 6]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
+    @validator("nnqparm")
+    def nnqparm_valid_values(cls, v):
+        choices = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("closure_type")
+    def closure_type_valid_values(cls, v):
+        choices = ['PB', 'EN', 'GR', 'LO', 'MC', 'SC', 'AS']
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("nnshcu")
+    def nnshcu_valid_values(cls, v):
+        choices = [0, 1, 2, 3]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("isfcl")
+    def isfcl_valid_values(cls, v):
+        choices = [0, 1, 2, 3, 4, 5]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("isfcl_ocean")
+    def isfcl_ocean_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("soil_moist_fail")
+    def soil_moist_fail_valid_values(cls, v):
+        choices = ['s', 'h', 'l']
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("mcphys_type")
+    def mcphys_type_valid_values(cls, v):
+        choices = [0, 1, 2, 3, 4, 5, 6, 7]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 class IsanControl(ramsin_model.IsanControl):
     pass
