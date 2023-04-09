@@ -11,7 +11,7 @@ $END
 
    TIMEUNIT = 'h',      ! 'h','m','s' - Time units of TIMMAX, TIMSTR
 
-   TIMMAX   = 24,       ! Final time of simulation
+   TIMMAX   = 24.,       ! Final time of simulation
 
 !  Start of simulation or ISAN processing
 
