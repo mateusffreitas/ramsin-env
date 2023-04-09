@@ -51,7 +51,19 @@ class ModelGrids(ramsin_model.ModelGrids):
 
 
 class CcattInfo(ramsin_model.CcattInfo):
-    pass
+    @validator("ccatt", "chem_assim", "aerosol", "aer_assim")
+    def ccattinfo_on_off_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("chemistry")
+    def chemistry_valid_values(cls, v):
+        choices = [-1, 0, 1, 2, 3, 4]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class ModelFileInfo(ramsin_model.ModelFileInfo):
