@@ -132,16 +132,30 @@ class ModelOptions(ramsin_model.ModelOptions):
             raise ValueError(f"Value must be one of {choices}")
         return v
 
+
 class IsanControl(ramsin_model.IsanControl):
-    pass
+    @validator("isan_inc")
+    def isan_inc_positive(cls, v):
+        if v <= 0:
+            raise ValueError(f"Value must be positive")
+        return v
 
 
 class IsanIsentropic(ramsin_model.IsanIsentropic):
-    pass
+    @validator("icfiletype")
+    def icfiletype_valid_values(cls, v):
+        choices = [0, 1, 2, 3, 4]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class Post(ramsin_model.Post):
-    pass
+    @validator("vp")
+    def vp_length_eq_nvp(cls, v, values):
+        if len(v) != int(values["nvp"]):
+            raise ValueError("Length must be equal to nvp")
+        return v
 
 
 class RamsinBasic(BaseSettings):
