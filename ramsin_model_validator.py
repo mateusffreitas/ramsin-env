@@ -172,11 +172,38 @@ class RamsinBasic(BaseSettings):
     post: Post
 
     @validator("model_file_info")
-    def multiple_of_dtlong(cls, v, values):
+    def frqanl_multiple_of_dtlong(cls, v, values):
         if (
                 values.get("model_grids") is not None
                 and values["model_grids"].dtlong is not None
                 and (v.frqanl % values["model_grids"].dtlong) != 0.0
         ):
             raise ValueError('frqanl must be a multiple of dtlong')
+        return v
+
+    @validator("ccatt_info")
+    def chem_timestep_multiple_of_dtlong(cls, v, values):
+        if (
+                v.ccatt == 1
+                and values.get("model_grids") is not None
+                and values["model_grids"].dtlong is not None
+                and ((v.chem_timestep % values["model_grids"].dtlong) != 0.0
+                     or (v.chem_timestep / values["model_grids"].dtlong) > 4)
+        ):
+            raise ValueError(
+                'chem_timestep must be a multiple of dtlong and 4 times at most')
+        return v
+
+    @validator("ccatt_info")
+    def aer_timestep_multiple_of_dtlong(cls, v, values):
+        if (
+                v.ccatt == 1
+                and v.aerosol == 1
+                and values.get("model_grids") is not None
+                and values["model_grids"].dtlong is not None
+                and ((v.aer_timestep % values["model_grids"].dtlong) != 0.0
+                     or (v.aer_timestep / values["model_grids"].dtlong) > 4)
+        ):
+            raise ValueError(
+                'aer_timestep must be a multiple of dtlong and 4 times at most')
         return v
