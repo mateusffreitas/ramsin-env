@@ -2,7 +2,7 @@ from __future__ import annotations
 import ramsin_model
 from pydantic import BaseSettings, validator
 from ramsin_model_config import RamsinConfig
-
+from datetime import date
 
 class ModelAdvRamsin(ramsin_model.ModelAdvRamsin):
     pass
@@ -35,6 +35,14 @@ class ModelGrids(ramsin_model.ModelGrids):
     def positive_value(cls, v):
         if v <= 0:
             raise ValueError('Value must be positive')
+        return v
+
+    @validator('iyear1')
+    def check_valid_date(cls, v, values):
+        try:
+            exp_date = date.fromisoformat(f"{v:04}-{values['imonth1']:02}-{values['idate1']:02}")
+        except ValueError as e:
+            raise ValueError(e)
         return v
 
     @validator("dtlong")
