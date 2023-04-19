@@ -45,12 +45,36 @@ class CcattInfo2(ramsin_adv_model.CcattInfo2):
 
 
 class TebSpmInfo(ramsin_adv_model.TebSpmInfo):
-    pass
+    @validator("teb_spm")
+    def teb_spm_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class ModelFileInfo2(ramsin_adv_model.ModelFileInfo2):
-    pass
+    @validator("nud_type")
+    def nud_type_valid_values(cls, v):
+        choices = [0, 1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
+    @validator("iclobber", "ihistdel", "ipastin", "kwrite", "initfld", "iupdndvi",
+               "iupdsst", "mkcoltab")
+    def modelfileinfo2_on_off_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("applyiau")
+    def applyiau_valid_values(cls, v):
+        choices = [0, 1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 class ModelOptions2(ramsin_adv_model.ModelOptions2):
     pass
