@@ -5,11 +5,43 @@ from ramsin_model_config import RamsinConfig
 
 
 class ModelGrids2(ramsin_adv_model.ModelGrids2):
-    pass
+
+    @validator("ihtran")
+    def ihtran_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("ideltat")
+    def ideltat_valid_values(cls, v):
+        choices = [0, 1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class CcattInfo2(ramsin_adv_model.CcattInfo2):
-    pass
+    @validator("split_method")
+    def split_method_valid_values(cls, v):
+        choices = ['SYMMETRIC', 'SEQUENTIAL', 'PARALLEL']
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("chemistry_aq", "recycle_tracers", "plumerise", "volcanoes")
+    def ccattinfo2_on_off_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("def_proc_src")
+    def def_proc_src_valid_values(cls, v):
+        choices = ['STOP', 'LAST_SOURCES']
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class TebSpmInfo(ramsin_adv_model.TebSpmInfo):
@@ -50,6 +82,7 @@ class Meteogram(ramsin_adv_model.Meteogram):
 
 class RamsinAdvanced(BaseSettings):
     class Config(RamsinConfig): pass
+
     model_grids2: ModelGrids2
     ccatt_info2: CcattInfo2
     teb_spm_info: TebSpmInfo
