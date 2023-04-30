@@ -3,26 +3,15 @@ A prototype of a tool to enable the usage of environment variables to edit the R
 
 ## Usage
 ```bash
-python3 main.py -h
+python3 ramsin_env.py -h
+# With Nuitka binary
+./ramsin_env.bin -h
 ```
 
-## Generating the model classes with code generation
+## Generating a bundled binary with [Nuitka](https://nuitka.net/doc/user-manual.html)
 
 ```bash
-f90nml RAMSIN_BASIC ramsin.json
-
-datamodel-codegen --input ramsin.json \
-    --input-file-type json \
-    --base-class pydantic.BaseSettings \
-    --output ramsin_model.py \
-    --class-name RamsinBasic
-
-f90nml RAMSIN_ADVANCED ramsin_adv.json
-
-datamodel-codegen --input ramsin_adv.json \
-    --input-file-type json \
-    --base-class pydantic.BaseSettings \
-    --output ramsin_adv_model.py \
-    --class-name RamsinAdvanced
-
+pip install nuitka
+python3 -m nuitka --follow-imports ramsin_env.py
+# Produces ramsin_env.bin
 ```

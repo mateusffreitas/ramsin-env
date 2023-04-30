@@ -132,3 +132,7 @@ dmypy.json
 .idea/
 
 *.json
+
+# Nuitka
+*.bin
+*.build/

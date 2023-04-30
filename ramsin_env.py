@@ -55,16 +55,18 @@ def environ_test_setup():
     os.environ.setdefault("RAMSIN_NNXP", "560")
     os.environ.setdefault("RAMSIN_TIMMAX", "999")
     os.environ.setdefault("RAMSIN_EXPNME", "Test")
+    #os.environ.setdefault("RAMSIN_DELTAZ", "1,2,3")
     os.environ.setdefault("RAMSIN_ZZ", "1,2,3")
     os.environ.setdefault("RAMSIN_IPLEVS", "1,2,3")
-    os.environ.setdefault("RAMSIN_VP", "precip,topo,tempc")
+    #os.environ.setdefault("RAMSIN_VP", "precip,topo,tempc")
 
     # os.environ.setdefault("RAMSIN_MODEL_GRIDS_DTLONG", "3.")
     os.environ.setdefault("ramsin_frqanl", "30.")
 
 
 def main():
-    #environ_test_setup()
+    if os.environ.get("DEV_ENV") is not None:
+        environ_test_setup()
 
     args = get_args()
 
