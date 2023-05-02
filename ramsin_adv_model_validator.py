@@ -77,7 +77,27 @@ class ModelFileInfo2(ramsin_adv_model.ModelFileInfo2):
         return v
 
 class ModelOptions2(ramsin_adv_model.ModelOptions2):
-    pass
+
+    @validator("dyncore_flag")
+    def dyncore_flag_valid_values(cls, v):
+        choices = [0, 1, 2, 3]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("advmnt")
+    def advmnt_valid_values(cls, v):
+        choices = [0, 1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("icorflg","imassflx", "lonrad", "g3d_spread")
+    def modeloptions2_on_off_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class ModelSound(ramsin_adv_model.ModelSound):
