@@ -76,6 +76,7 @@ class ModelFileInfo2(ramsin_adv_model.ModelFileInfo2):
             raise ValueError(f"Value must be one of {choices}")
         return v
 
+
 class ModelOptions2(ramsin_adv_model.ModelOptions2):
 
     @validator("dyncore_flag")
@@ -92,9 +93,95 @@ class ModelOptions2(ramsin_adv_model.ModelOptions2):
             raise ValueError(f"Value must be one of {choices}")
         return v
 
-    @validator("icorflg","imassflx", "lonrad", "g3d_spread")
+    @validator("iexev")
+    def iexev_valid_values(cls, v):
+        choices = [1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("jbnd")
+    def jbnd_valid_values(cls, v):
+        choices = [1, 2, 3, 4]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("lsflg")
+    def lsflg_valid_values(cls, v):
+        choices = [0, 1, 2, 3]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("npatch")
+    def npatch_valid_values(cls, v):
+        minimum = 2
+        if v < minimum:
+            raise ValueError(f"Value must be greater or equal to {minimum}")
+        return v
+
+    @validator("nvegpat")
+    def nvegpat_valid_values(cls, v, values):
+        minimum = 1
+        if v < minimum or (values.get("npatch") is not None and v >= values["npatch"]):
+            raise ValueError(
+                f"Value must be greater or equal to {minimum} and lesser than NPATCH")
+        return v
+
+    @validator("nvgcon")
+    def nvgcon_valid_values(cls, v):
+        choices = list(range(1, 19))  # 1 - 18
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("nslcon")
+    def nslcon_valid_values(cls, v):
+        choices = list(range(1, 13))  # 1 - 12
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("ihorgrad")
+    def ihorgrad_valid_values(cls, v):
+        choices = [1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("irime")
+    def irime_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("iplaws")
+    def iplaws_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("icorflg", "imassflx", "lonrad", "g3d_spread")
     def modeloptions2_on_off_valid_values(cls, v):
         choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("idiffk")
+    def idiffk_valid_values(cls, v):
+        choices = list(range(1, 9))  # 1 - 8
+        for element in v:
+            if element not in choices:
+                raise ValueError(f"Each value must be one of {choices}")
+        return v
+
+    @validator("soil_moist")
+    def soil_moist_valid_values(cls, v):
+        choices = ['n', 'i', 'h', 'a']
         if v not in choices:
             raise ValueError(f"Value must be one of {choices}")
         return v
