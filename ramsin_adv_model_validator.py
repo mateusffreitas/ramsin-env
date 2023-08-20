@@ -188,7 +188,34 @@ class ModelOptions2(ramsin_adv_model.ModelOptions2):
 
 
 class ModelSound(ramsin_adv_model.ModelSound):
-    pass
+
+    @validator("ipsflg")
+    def ipsflg_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("itsflg")
+    def itsflg_valid_values(cls, v):
+        choices = [0, 1, 2]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("irtsflg")
+    def irtsflg_valid_values(cls, v):
+        choices = [0, 1, 2, 3, 4]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("iusflg")
+    def iusflg_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class ModelPrint(ramsin_adv_model.ModelPrint):
