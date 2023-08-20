@@ -219,7 +219,34 @@ class ModelSound(ramsin_adv_model.ModelSound):
 
 
 class ModelPrint(ramsin_adv_model.ModelPrint):
-    pass
+
+    @validator("nplt")
+    def nplt_valid_values(cls, v):
+        if v < 0 or v > 50:
+            raise ValueError(f"Value must be between 0 and 50")
+        return v
+
+    @validator("ixsctn")
+    def ixsctn_valid_values(cls, v):
+        choices = [1, 2, 3]
+        for element in v:
+            if element not in choices:
+                raise ValueError(f"Each value must be one of {choices}")
+        return v
+
+    @validator("iplfld")
+    def iplfld_valid_values(cls, v):
+        choices = ['UP', 'VP', 'WP', 'PP', 'THP', 'RT', 'RC', 'PCPT', 'TKE', 'HSCL',
+                   'RR', 'RP', 'RA', 'TV', 'CP', 'RV', 'RTP',
+                   'VSCL', 'THETA', 'RL', 'TG', 'SLM', 'THVP', 'RI', 'RCOND', 'CONPR',
+                   'CONP', 'CONH', 'CONM', 'THIL', 'TEMP', 'TVP', 'THV', 'RELHUM',
+                   'SPEED', 'FTHRD', 'MICRO', 'Z0', 'ZI', 'ZMAT', 'USTARL', 'USTARW',
+                   'TSTARL', 'TSTARW', 'RSTARL', 'RSTARW', 'UW', 'VW', 'WFZ', 'TFZ',
+                   'QFZ', 'RLONG', 'RSHORT']
+        for element in v:
+            if element not in choices:
+                raise ValueError(f"Each value must be one of {choices}")
+        return v
 
 
 class IsanControl2(ramsin_adv_model.IsanControl2):
