@@ -223,7 +223,41 @@ class ModelPrint(ramsin_adv_model.ModelPrint):
 
 
 class IsanControl2(ramsin_adv_model.IsanControl2):
-    pass
+
+    @validator("guess1st")
+    def guess1st_valid_values(cls, v):
+        choices = ['PRESS', 'RAMS']
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("i1st_flg")
+    def i1st_flg_valid_values(cls, v):
+        choices = [1, 2, 3]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("iupa_flg")
+    def iupa_flg_valid_values(cls, v):
+        choices = [1, 2, 3]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("isfc_flg")
+    def isfc_flg_valid_values(cls, v):
+        choices = [1, 2, 3]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
+
+    @validator("ioflgisz", "ioflgvar")
+    def ioflgisz_ioflgvar_valid_values(cls, v):
+        choices = [0, 1]
+        if v not in choices:
+            raise ValueError(f"Value must be one of {choices}")
+        return v
 
 
 class IsanIsentropic2(ramsin_adv_model.IsanIsentropic2):
