@@ -11,7 +11,8 @@ python3 ramsin_env.py -h
 ## Generating a bundled binary with [Nuitka](https://nuitka.net/doc/user-manual.html)
 
 ```bash
-pip install nuitka
-python3 -m nuitka --follow-imports ramsin_env.py
+pip3 install nuitka
+pip3 install -r requirements.txt
+python3 -m nuitka --onefile --standalone ramsin_env.py
 # Produces ramsin_env.bin
 ```

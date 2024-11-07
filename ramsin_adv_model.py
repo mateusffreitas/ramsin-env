@@ -117,6 +117,7 @@ class ModelOptions2(BaseSettings):
     distim: float
     raddatfn: str
     lonrad: int
+    radtun: float
     g3d_spread: int
     wcldbs: float
     npatch: int
@@ -159,6 +160,10 @@ class ModelOptions2(BaseSettings):
     hparm: float
     dparm: float
     gnu: List[float]
+    windfarm: int
+    wffile: str
+    timeinterval_wf: int
+
 
 
 class ModelSound(BaseSettings):

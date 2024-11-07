@@ -24,15 +24,23 @@ Examples of supported environment variable naming scheme and values: \n
 
     parser.add_argument(
         "--ramsin_basic",
-        "-f",
+        "-rb",
         action="store",
         type=str,
         default="RAMSIN_BASIC",
         help="the RAMSIN_BASIC file",
     )
     parser.add_argument(
+        "--ramsin_advanced",
+        "-ra",
+        action="store",
+        type=str,
+        default="",
+        help="the RAMSIN_ADVANCED file",
+    )
+    parser.add_argument(
         "--output_basic",
-        "-o",
+        "-ob",
         action="store",
         type=str,
         default="RAMSIN_BASIC_MODIFIED",
@@ -40,7 +48,7 @@ Examples of supported environment variable naming scheme and values: \n
     )
     parser.add_argument(
         "--output_advanced",
-        "-a",
+        "-oa",
         action="store",
         type=str,
         default="RAMSIN_ADVANCED_MODIFIED",
@@ -80,7 +88,10 @@ def main():
     ramsin_basic.patch(model.dict())
     ramsin_basic.write(nml_path=args.output_basic, force=True, sort=False)
 
-    ramsin_advanced_path = ramsin_basic["MODEL_ADV_RAMSIN"]["ADVANCED_RAMSIN"]
+    if len(args.ramsin_advanced) == 0:
+        ramsin_advanced_path = ramsin_basic["MODEL_ADV_RAMSIN"]["ADVANCED_RAMSIN"]
+    else:
+        ramsin_advanced_path = args.ramsin_advanced
 
     with open(ramsin_advanced_path) as f:
         ramsin_advanced = f90nml.read(f)

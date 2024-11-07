@@ -239,6 +239,7 @@ $MODEL_OPTIONS2
 
    LONRAD   = 1,        ! Longitudinal variation of shortwave
                               !    (0-no, 1-yes)
+   RADTUN = 0.7,
 
    G3D_SPREAD  = 0, ! Lateral spreading of enviromental subsidence (0=off, 1=on)
                      ! (only for NNQPARM  = 3 and grid spacing < 10km)
@@ -344,6 +345,9 @@ $MODEL_OPTIONS2
    DPARM   = 1.01e-5,          ! (5 = 3D homogeneous 6 = vertical profile)
 
    GNU     = 2.,2.,2.,2.,2.,2.,2.,2., ! Gamma shape parms for
+   WINDFARM = 1,
+   WFFILE= './'
+   timeInterval_wf = 1296000
 
 $END
 

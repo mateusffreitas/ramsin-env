@@ -136,3 +136,4 @@ dmypy.json
 # Nuitka
 *.bin
 *.build/
+*.dist/

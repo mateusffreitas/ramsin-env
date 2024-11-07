@@ -288,7 +288,18 @@ class IsanControl2(ramsin_adv_model.IsanControl2):
 
 
 class IsanIsentropic2(ramsin_adv_model.IsanIsentropic2):
-    pass
+
+    @validator("nisn")
+    def nisn_gte_1(cls, v):
+        if v < 1:
+            raise ValueError("Value must be greater or equal to 1")
+        return v
+
+    @validator("levth")
+    def levth_length_eq_nisn(cls, v, values):
+        if values.get("nisn") is not None and len(v) != values["nisn"]:
+            raise ValueError("Length must be equal to nisn")
+        return v
 
 
 class Digitalfilter(ramsin_adv_model.Digitalfilter):
