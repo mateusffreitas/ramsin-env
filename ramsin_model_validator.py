@@ -77,7 +77,7 @@ class CcattInfo(ramsin_model.CcattInfo):
 class ModelFileInfo(ramsin_model.ModelFileInfo):
     @validator("ioutput")
     def ioutput_valid_values(cls, v):
-        choices = [0, 1, 2]
+        choices = [0, 1, 2, 10]
         if v not in choices:
             raise ValueError(f"Value must be one of {choices}")
         return v
