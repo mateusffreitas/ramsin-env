@@ -163,7 +163,9 @@ class ModelOptions2(BaseSettings):
     windfarm: int
     wffile: str
     timeinterval_wf: int
-
+    dammodule: int
+    frqprecip: float
+    damoutprefix: str
 
 
 class ModelSound(BaseSettings):
