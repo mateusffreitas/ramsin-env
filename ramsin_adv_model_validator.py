@@ -56,7 +56,7 @@ class TebSpmInfo(ramsin_adv_model.TebSpmInfo):
 class ModelFileInfo2(ramsin_adv_model.ModelFileInfo2):
     @validator("nud_type")
     def nud_type_valid_values(cls, v):
-        choices = [0, 1, 2]
+        choices = [0, 1, 2, 3, 4]
         if v not in choices:
             raise ValueError(f"Value must be one of {choices}")
         return v
