@@ -348,6 +348,9 @@ $MODEL_OPTIONS2
    WINDFARM = 1,
    WFFILE= './'
    timeInterval_wf = 1296000
+   DAMMODULE = 0,
+   FRQPRECIP = 300.,
+   DAMOUTPREFIX = "Pbacia",
 
 $END
 
